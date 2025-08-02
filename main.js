@@ -32,31 +32,50 @@ async function scrapePostUrls(url, maxPosts, browser) {
 }
 
 await Actor.main(async () => {
-    const { usernames = [], hashtags = [], maxPostsPerProfile = 20 } = await Actor.getInput();
+    try {
+        const input = await Actor.getInput() || {};
+        const {
+            usernames = [],
+            hashtags = [],
+            maxPostsPerProfile = 20,
+        } = input;
 
-    if (usernames.length === 0 && hashtags.length === 0) {
-        throw new Error("Please provide at least one username or hashtag.");
-    }
-
-    const proxyConfiguration = await Actor.createProxyConfiguration({
-        groups: ['DATACENTER'],
-    });
-
-    const browser = await Actor.launchPlaywright({ proxyConfiguration });
-
-    for (const username of usernames) {
-        const postUrls = await scrapePostUrls(`https://www.instagram.com/${username}/`, maxPostsPerProfile, browser);
-        for (const postUrl of postUrls) {
-            await Actor.pushData({ username, postUrl });
+        if (usernames.length === 0 && hashtags.length === 0) {
+            console.log("❌ No usernames or hashtags provided in input.");
+            return;
         }
-    }
 
-    for (const tag of hashtags) {
-        const postUrls = await scrapePostUrls(`https://www.instagram.com/explore/tags/${tag}/`, maxPostsPerProfile, browser);
-        for (const postUrl of postUrls) {
-            await Actor.pushData({ hashtag: tag, postUrl });
+        const proxyConfiguration = await Actor.createProxyConfiguration({
+            groups: ['DATACENTER'],
+        });
+
+        const browser = await Actor.launchPlaywright({ proxyConfiguration });
+
+        for (const username of usernames) {
+            const postUrls = await scrapePostUrls(
+                `https://www.instagram.com/${username}/`,
+                maxPostsPerProfile,
+                browser
+            );
+            for (const postUrl of postUrls) {
+                await Actor.pushData({ username, postUrl });
+            }
         }
-    }
 
-    await browser.close();
+        for (const tag of hashtags) {
+            const postUrls = await scrapePostUrls(
+                `https://www.instagram.com/explore/tags/${tag}/`,
+                maxPostsPerProfile,
+                browser
+            );
+            for (const postUrl of postUrls) {
+                await Actor.pushData({ hashtag: tag, postUrl });
+            }
+        }
+
+        await browser.close();
+    } catch (err) {
+        console.error("💥 Uncaught Error:", err.message);
+        console.error(err.stack);
+    }
 });
