@@ -1,0 +1,9 @@
+{
+  "name": "instagram-post-url-scraper",
+  "version": "1.0.0",
+  "description": "Scrapes only Instagram post URLs from profiles or hashtags with proxy rotation.",
+  "type": "module",
+  "dependencies": {
+    "apify": "^3.0.0"
+  }
+}
