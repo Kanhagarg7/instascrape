@@ -1,0 +1,7 @@
+{
+  "name": "instagram-post-url-scraper",
+  "title": "Instagram Post URL Scraper",
+  "description": "Scrapes only Instagram post URLs from profiles or hashtags using Apify's free datacenter proxy rotation.",
+  "version": "1.0",
+  "input": "./INPUT_SCHEMA.json"
+}
