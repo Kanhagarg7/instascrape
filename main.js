@@ -9,16 +9,14 @@ async function scrapePostUrls(url, maxPosts, browser) {
     let urls = [];
     let prevHeight = 0;
 
-    // Scroll until we get enough posts
     while (urls.length < maxPosts) {
-        const newUrls = await page.evaluate(() => {
-            return Array.from(document.querySelectorAll('article a'))
+        const newUrls = await page.evaluate(() =>
+            Array.from(document.querySelectorAll('article a'))
                 .map(a => a.href)
-                .filter(href => href.includes('/p/'));
-        });
+                .filter(href => href.includes('/p/'))
+        );
 
-        urls = [...urls, ...newUrls];
-        urls = [...new Set(urls)]; // remove duplicates
+        urls = [...new Set([...urls, ...newUrls])];
 
         const height = await page.evaluate(() => document.body.scrollHeight);
         if (height === prevHeight) break;
@@ -34,43 +32,27 @@ async function scrapePostUrls(url, maxPosts, browser) {
 }
 
 await Actor.main(async () => {
-    const input = await Actor.getInput();
-    const {
-        usernames = [],
-        hashtags = [],
-        maxPostsPerProfile = 20,
-    } = input;
+    const { usernames = [], hashtags = [], maxPostsPerProfile = 20 } = await Actor.getInput();
 
     if (usernames.length === 0 && hashtags.length === 0) {
         throw new Error("Please provide at least one username or hashtag.");
     }
 
-    // Use free rotating datacenter proxies
     const proxyConfiguration = await Actor.createProxyConfiguration({
         groups: ['DATACENTER'],
     });
 
     const browser = await Actor.launchPlaywright({ proxyConfiguration });
 
-    // Scrape usernames
     for (const username of usernames) {
-        const postUrls = await scrapePostUrls(
-            `https://www.instagram.com/${username}/`,
-            maxPostsPerProfile,
-            browser
-        );
+        const postUrls = await scrapePostUrls(`https://www.instagram.com/${username}/`, maxPostsPerProfile, browser);
         for (const postUrl of postUrls) {
             await Actor.pushData({ username, postUrl });
         }
     }
 
-    // Scrape hashtags
     for (const tag of hashtags) {
-        const postUrls = await scrapePostUrls(
-            `https://www.instagram.com/explore/tags/${tag}/`,
-            maxPostsPerProfile,
-            browser
-        );
+        const postUrls = await scrapePostUrls(`https://www.instagram.com/explore/tags/${tag}/`, maxPostsPerProfile, browser);
         for (const postUrl of postUrls) {
             await Actor.pushData({ hashtag: tag, postUrl });
         }
