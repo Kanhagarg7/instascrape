@@ -8,14 +8,14 @@
       "type": "array",
       "description": "List of Instagram usernames to scrape post URLs from.",
       "default": ["nasa"],
-      "editor": "array"
+      "items": { "type": "string" }
     },
     "hashtags": {
       "title": "Instagram Hashtags",
       "type": "array",
       "description": "List of hashtags to scrape post URLs from.",
       "default": ["nature"],
-      "editor": "array"
+      "items": { "type": "string" }
     },
     "maxPostsPerProfile": {
       "title": "Max Post URLs per Profile/Hashtag",
