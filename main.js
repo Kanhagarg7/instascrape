@@ -1,4 +1,4 @@
-import { Actor } from 'apify';
+const { Actor } = require('apify');
 
 async function scrapePostUrls(url, maxPosts, browser) {
     const page = await browser.newPage();
