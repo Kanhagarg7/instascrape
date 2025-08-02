@@ -1,0 +1,26 @@
+{
+  "title": "Instagram Post URL Scraper Input",
+  "type": "object",
+  "properties": {
+    "usernames": {
+      "title": "Instagram Usernames",
+      "type": "array",
+      "description": "List of Instagram usernames to scrape post URLs from.",
+      "default": ["nasa"],
+      "editor": "array"
+    },
+    "hashtags": {
+      "title": "Instagram Hashtags",
+      "type": "array",
+      "description": "List of hashtags to scrape post URLs from.",
+      "default": ["nature"],
+      "editor": "array"
+    },
+    "maxPostsPerProfile": {
+      "title": "Max Post URLs per Profile/Hashtag",
+      "type": "integer",
+      "description": "Number of post URLs to scrape per profile/hashtag.",
+      "default": 600
+    }
+  }
+}
