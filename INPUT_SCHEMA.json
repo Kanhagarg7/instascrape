@@ -1,4 +1,5 @@
 {
+  "schemaVersion": 1,
   "title": "Instagram Post URL Scraper Input",
   "type": "object",
   "properties": {
